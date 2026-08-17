@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nearby Recycling Centers | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/map.css">
+</head>
+<body class="map-body">
+
+<!-- Minimal Header Overlay -->
+<header class="map-header">
+    <div class="header-logo" style="cursor: pointer;" onclick="window.location.href='dashboard.html'">
+        <i class="fa-solid fa-arrow-left"></i> Back to EcoSort
+    </div>
+</header>
+
+<!-- Map Container -->
+<div id="map"></div>
+
+<!-- Search & Location Top Bar -->
+<div class="map-search-bar card">
+    <div class="search-input-wrapper">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="mapSearchInput" placeholder="Search your location, city or PIN code...">
+    </div>
+    <button class="btn btn-primary use-loc-btn" id="useMyLocationBtn">
+        <i class="fa-solid fa-location-crosshairs"></i> Use My Location
+    </button>
+</div>
+
+<!-- Floating Side Panel -->
+<div class="map-side-panel card" id="sidePanel">
+    <div class="panel-header">
+        <h3>Nearby Recycling Centers</h3>
+        <span class="text-muted" id="centersCountText">Finding centers...</span>
+        
+        <!-- Filter Tabs -->
+        <div class="map-filters" id="mapFilters">
+            <button class="map-filter active" data-filter="All">All</button>
+            <button class="map-filter" data-filter="E-Waste">💻 E-Waste</button>
+            <button class="map-filter" data-filter="Battery">🔋 Batteries</button>
+            <button class="map-filter" data-filter="Clothes">👕 Clothes</button>
+            <button class="map-filter" data-filter="Plastic">🧴 Plastic</button>
+            <button class="map-filter" data-filter="Glass">🍾 Glass</button>
+        </div>
+    </div>
+    
+    <div class="panel-content" id="centersList">
+        <!-- Dyn contents -->
+        <div class="text-center text-muted" style="padding: 2rem;">Loading nearby centers...</div>
+    </div>
+</div>
+
+<!-- Mobile Panel Handle (only visible on mobile) -->
+<div class="mobile-panel-handle" id="mobileHandle">
+    <div class="handle-bar"></div>
+</div>
+
+<!-- Scripts -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="js/map.js"></script>
+</body>
+</html>

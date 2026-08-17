@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Scanner | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Scanner specifics -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0/dist/mobilenet.min.js"></script>
+    <style>
+        .scanner-container {
+            display: flex;
+            gap: 2rem;
+            align-items: flex-start;
+        }
+        
+        .camera-view {
+            flex: 2;
+            background: #000;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .camera-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            border: 4px solid rgba(255, 255, 255, 0.2);
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 2rem;
+        }
+        
+        .scan-frame {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%; height: 60%;
+            border: 2px dashed rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+        }
+
+        .scanning-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            display: none;
+            animation: scan 2s linear infinite alternate;
+        }
+
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
+        
+        .controls {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 1rem;
+            pointer-events: auto; /* Fix: allow clicking the buttons */
+        }
+        
+        .capture-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            border: 4px solid #ddd;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .capture-btn:hover {
+            transform: scale(1.1);
+            background: var(--primary-light);
+        }
+
+        .upload-btn-cam {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            backdrop-filter: blur(5px);
+        }
+        
+        .results-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .result-card {
+            display: none; /* hidden by default */
+        }
+        
+        .confidence-meter {
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .category-btn {
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .category-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(46, 125, 50, 0.05);
+        }
+
+        .uncertainty-alert {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--warning);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .sorting-animation {
+            text-align: center;
+            padding: 2rem;
+            display: none;
+        }
+
+        .sort-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .scanner-container {
+                flex-direction: column;
+            }
+            .camera-view {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="login.html" onclick="logout();" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">AI Waste Scanner</h2></div>
+
+        <div class="content-wrapper scanner-container">
+            <!-- Camera and Upload -->
+            <div style="flex: 2; display: flex; flex-direction: column; gap: 1rem;">
+                <!-- Camera View -->
+                <div class="camera-view" id="cameraView" style="position: relative;">
+                    <!-- Placeholder when camera is off -->
+                    <div id="cameraPlaceholder" style="position: absolute; z-index: 5; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.8); color: white;">
+                        <i class="fa-solid fa-video-slash" style="font-size: 3rem; margin-bottom: 1rem; color: rgba(255,255,255,0.7);"></i>
+                        <h4 style="margin-bottom: 1.5rem; font-weight: 500;">Camera feeds are off by default</h4>
+                        <button id="startCameraBtn" class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 2rem; border-radius: 30px; display: flex; align-items: center; gap: 0.5rem; background: var(--primary-color);">
+                            <i class="fa-solid fa-camera"></i> Start Live Camera
+                        </button>
+                    </div>
+
+                    <video id="cameraStream" autoplay playsinline style="width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 4; display: none;"></video>
+                    <canvas id="captureCanvas" style="display: none;"></canvas>
+                    <img id="scannedImage" src="" alt="Scanned item" style="display: none; width: 100%; height: 100%; object-fit: cover; position: absolute; z-index: 5;">
+                    
+                    <div class="camera-overlay" style="z-index: 10;">
+                        <div id="liveDetectionBadge" style="position: absolute; top: 1rem; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 0.75rem 1.5rem; border-radius: 30px; font-weight: bold; font-size: 1.1rem; z-index: 10; display: none; align-items: center; gap: 0.5rem; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                            <i class="fa-solid fa-spinner fa-spin"></i> Initializing Auto-Scan...
+                        </div>
+                        <div class="scan-frame">
+                            <div class="scanning-line" id="scanLine"></div>
+                        </div>
+                        
+                        <div class="controls">
+                            <!-- File upload moved to separate block below -->
+                            <button class="capture-btn" id="captureBtn" title="Scan" style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; width: auto; padding: 0 1.5rem; border-radius: 30px; font-weight: bold; font-size: 1.1rem; color: #333;">
+                                <i class="fa-solid fa-camera"></i> Capture
+                            </button>
+                            
+                            <button class="upload-btn-cam" title="Simulate Random Item" id="randomBtn">
+                                <i class="fa-solid fa-dice"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Independent Upload Box -->
+                <label for="fileUpload" class="card text-center" style="display: block; padding: 1.5rem; cursor: pointer; border: 2px dashed rgba(76, 175, 80, 0.4); background: rgba(255,255,255,0.7);">
+                    <input type="file" id="fileUpload" style="display: none;" accept="image/*, .jpg, .png, .jpeg">
+                    <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; color: var(--primary-color); margin-bottom: 0.5rem;"></i>
+                    <h4 style="margin: 0; color: var(--text-main); font-size: 1.1rem;">Upload Image Separately</h4>
+                    <p style="margin: 0; font-size: 0.85rem; color: var(--text-muted); margin-top: 5px;">Verify offline photos from your gallery</p>
+                </label>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-panel">
+                <!-- Initial State -->
+                <div class="card text-center" id="initialState">
+                    <i class="fa-solid fa-arrow-left" style="font-size: 2rem; color: var(--primary-light); margin-bottom: 1rem;"></i>
+                    <h3>Ready to Scan</h3>
+                    <p class="text-muted">Place waste in the frame and press the capture button, or simulate a scan.</p>
+                </div>
+
+                <!-- Processing State -->
+                <div class="card text-center" id="processingState" style="display: none;">
+                    <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2.5rem; color: var(--primary-color); margin-bottom: 1rem;"></i>
+                    <h3>AI Processing...</h3>
+                    <p class="text-muted">Analyzing object features</p>
+                </div>
+
+                <!-- Result Card -->
+                <div class="card result-card" id="resultState">
+                    <h3 style="margin-bottom: 1rem;">Classification Result</h3>
+                    
+                    <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <span class="text-muted" style="font-size: 0.85rem;">Detected Object</span>
+                        <div style="font-weight: 600; font-size: 1.2rem; margin-bottom: 0.5rem;" id="resObject">Plastic Bottle</div>
+                        
+                        <span class="text-muted" style="font-size: 0.85rem;">Category</span>
+                        <div style="font-weight: 600; color: var(--primary-color);" id="resCategory">
+                            <i class="fa-solid fa-recycle"></i> Recyclable
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1.5rem;">
+                        <div class="flex justify-between" style="font-size: 0.85rem;">
+                            <span>AI Confidence</span>
+                            <span id="resConfidenceText">96%</span>
+                        </div>
+                        <div class="confidence-meter">
+                            <div class="confidence-fill" id="resConfidenceFill"></div>
+                        </div>
+                    </div>
+
+                    <!-- Uncertainty Alert -->
+                    <div class="uncertainty-alert" id="uncertaintyAlert">
+                        <div style="color: var(--warning); font-weight: bold; margin-bottom: 0.5rem;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> AI is uncertain
+                        </div>
+                        <p style="font-size: 0.9rem; margin-bottom: 1rem;">The AI is not confident enough to automatically sort this item. Where should this waste go?</p>
+                        
+                        <div class="action-buttons">
+                            <button class="category-btn" onclick="confirmSort('Recyclable')">
+                                <i class="fa-solid fa-recycle" style="color: var(--info);"></i> Recyclable
+                            </button>
+                            <button class="category-btn" onclick="confirmSort('Organic')">
+                                <i class="fa-solid fa-apple-whole" style="color: var(--success);"></i> Organic
+                            </button>
+                            <button class="category-btn" onclick="confirmSort('Hazardous')">
+                                <i class="fa-solid fa-battery-full" style="color: var(--danger);"></i> Hazardous
+                            </button>
+                            <button class="category-btn" onclick="confirmSort('General')">
+                                <i class="fa-solid fa-trash" style="color: var(--text-muted);"></i> General Waste
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="autoActionInfo">
+                        <div style="background: rgba(76, 175, 80, 0.1); padding: 1rem; border-radius: 8px; border-left: 4px solid var(--success);">
+                            <span style="font-size: 0.85rem; font-weight: 600; color: var(--success);">Recommended Action</span>
+                            <div id="resAction">Place in Recyclable Bin</div>
+                        </div>
+                        <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" onclick="startSortingProcess()">
+                            Proceed to Sort <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                        
+                        <!-- Map Redirection Container -->
+                        <div id="mapRedirectContainer" style="margin-top: 1rem; display: none;">
+                            <button id="mapRedirectBtn" class="btn btn-secondary" style="width: 100%; border-color: var(--primary-color); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; gap: 0.5rem;" onclick="window.location.href='map.html'">
+                                📍 Find Recycling Centers
+                            </button>
+                        </div>
+
+                        <!-- Manual Override Input -->
+                        <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid #eee;">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.5rem; font-weight: 500;">AI output incorrect? Provide manual input:</p>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <input type="text" id="manualWasteName" placeholder="e.g. Cardboard box" style="flex: 1; padding: 0.75rem; border: 1px solid #ddd; border-radius: 8px; font-family: 'Inter', sans-serif;">
+                                <button class="btn btn-secondary" onclick="handleManualInput()" style="padding: 0 1.5rem;">Update</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sorting Animation -->
+                <div class="card sorting-animation" id="sortingState">
+                    <h3>Sorting in Progress</h3>
+                    <div class="sort-steps">
+                        <div id="step1" style="color: var(--text-muted);"><i class="fa-solid fa-check"></i> Waste Detected</div>
+                        <div id="step2" style="color: var(--text-muted);"><i class="fa-solid fa-check"></i> Bin Selected</div>
+                        <div id="step3" style="color: var(--text-muted);"><i class="fa-solid fa-gear fa-spin"></i> Motor Activated</div>
+                        <div id="step4" style="color: var(--text-muted); opacity: 0.5;"><i class="fa-solid fa-box"></i> Sorted Successfully</div>
+                    </div>
+                </div>
+                
+                <!-- Success State -->
+                <div class="card text-center" id="successState" style="display: none;">
+                    <div style="width: 80px; height: 80px; background: var(--success); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 1.5rem;">
+                        <i class="fa-solid fa-check"></i>
+                    </div>
+                    <h3 style="margin-bottom: 0.5rem;">Sorting Complete ✓</h3>
+                    <p class="text-muted" style="margin-bottom: 1.5rem;" id="successMsg">Plastic Bottle → Recyclable Bin</p>
+                    
+                    <div style="background: rgba(251, 192, 45, 0.1); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                        <span style="color: #f57f17; font-weight: bold; font-size: 1.2rem;" id="pointsEarned">+10 Eco Points</span>
+                    </div>
+                    
+                    <button class="btn btn-primary" id="requestPickupBtn" style="width: 100%; margin-bottom: 0.5rem; background: var(--primary-dark); display: none;">Request Waste Pickup</button>
+                    <p id="pickupPromptMsg" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.5rem; display: none;">Want us to collect this waste? Request a pickup from your municipality.</p>
+                    
+                    <button class="btn btn-secondary" style="width: 100%;" onclick="resetScanner()">Scan Another Item</button>
+                    
+                    <!-- Notification container for pickup status -->
+                    <div id="pickupStatusNotice" style="display: none; margin-top: 1rem; padding: 0.75rem; border-radius: 8px; background: rgba(46, 125, 50, 0.1); color: var(--success); border: 1px solid var(--success); font-size: 0.9rem;">
+                        <!-- Status text goes here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pickup Request Modal -->
+        <div id="pickupModalOverlay" style="display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; backdrop-filter: blur(5px);"></div>
+        <div class="card" id="pickupModal" style="display: none; position: fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; z-index:1000; box-shadow: 0 10px 30px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <h3 style="margin: 0;">Waste Pickup Request</h3>
+                <button onclick="closePickupModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-muted);">&times;</button>
+            </div>
+            
+            <div style="background: var(--bg-main); padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+                <p style="margin: 0 0 0.5rem;"><strong>User:</strong> <span id="modalUserName"></span></p>
+                <p style="margin: 0 0 0.5rem;"><strong>Waste:</strong> <span id="modalWasteType"></span></p>
+                <p style="margin: 0 0 0.5rem;"><strong>Category:</strong> <span id="modalWasteCat" style="color: var(--primary-color);"></span></p>
+                <p style="margin: 0 0 0.5rem;"><strong>Pickup Address:</strong> <br><span id="modalAddress" style="color: var(--text-muted);"></span></p>
+                <p style="margin: 0;"><strong>Status:</strong> <span style="color: var(--warning); font-weight: bold;">Request Pending</span></p>
+                <div id="modalMapPlaceholder" style="background:#ddd; height:100px; margin-top:1rem; border-radius:8px; display:flex; align-items:center; justify-content:center; color:#555;">
+                    <i class="fa-solid fa-map-location-dot" style="font-size:2rem;"></i> <span style="margin-left: 0.5rem;">Location Locked</span>
+                </div>
+            </div>
+            
+            <div id="missingAddressAlert" style="display: none; background: rgba(255, 152, 0, 0.1); border: 1px solid var(--warning); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; color: var(--warning); font-size: 0.9rem;">
+                Please add your pickup address to your profile before requesting collection.
+            </div>
+
+            <button id="confirmPickupBtn" class="btn btn-primary" style="width: 100%;">Confirm Pickup Request</button>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/scanner_latest.js"></script>
+</body>
+</html>

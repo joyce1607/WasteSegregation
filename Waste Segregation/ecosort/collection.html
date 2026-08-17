@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Collection | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .filter-btn {
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            background: white;
+            border: 1px solid #ddd;
+            color: var(--text-muted);
+            font-weight: 500;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+        }
+        
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .collection-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .collection-table th, .collection-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .collection-table th {
+            background: rgba(46, 125, 50, 0.05);
+            font-weight: 600;
+            color: var(--text-main);
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .collection-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .collection-table tbody tr:hover {
+            background: rgba(0,0,0,0.02);
+        }
+
+        .badge-cat {
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .cat-recyclable { background: rgba(33, 150, 243, 0.1); color: #1976d2; }
+        .cat-organic { background: rgba(76, 175, 80, 0.1); color: #388e3c; }
+        .cat-hazardous { background: rgba(244, 67, 54, 0.1); color: #d32f2f; }
+        .cat-general { background: rgba(158, 158, 158, 0.1); color: #616161; }
+        
+        .pts-col {
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">Waste Collection History</h2></div>
+
+        <div class="content-wrapper">
+            <div class="filters">
+                <button class="filter-btn active" data-filter="All">All Items</button>
+                <button class="filter-btn" data-filter="Recyclable">Recyclable</button>
+                <button class="filter-btn" data-filter="Organic">Organic</button>
+                <button class="filter-btn" data-filter="Hazardous">Hazardous</button>
+                <button class="filter-btn" data-filter="General">General</button>
+            </div>
+
+            <div class="table-responsive">
+                <table class="collection-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Waste Item</th>
+                            <th>Category</th>
+                            <th>AI Confidence</th>
+                            <th>Sorting Method</th>
+                            <th>Points</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="collectionBody">
+                        <!-- Dynamic content -->
+                    </tbody>
+                </table>
+                <div id="emptyState" class="empty-state" style="display: none;">
+                    <i class="fa-solid fa-box-open" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <h3>No items found</h3>
+                    <p>You haven't scanned any waste yet or none match this filter.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = checkAuth();
+        if (!user) return;
+        
+        loadCollection('All');
+        
+        // Filter logic
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                loadCollection(e.target.getAttribute('data-filter'));
+            });
+        });
+    });
+
+    function loadCollection(filter) {
+        const user = JSON.parse(localStorage.getItem('ecosort_current_user'));
+        const historyKey = `ecosort_history_${user.id}`;
+        
+        // Default demo data if empty
+        if (!localStorage.getItem(historyKey)) {
+            const demoHistory = [
+                { id: 1, date: 'Aug 13', time: '09:42 AM', name: 'Plastic Bottle', category: 'Recyclable', confidence: '96', method: 'AI', points: 10, status: 'Collected' },
+                { id: 2, date: 'Aug 13', time: '09:39 AM', name: 'Banana Peel', category: 'Organic', confidence: '98', method: 'AI', points: 5, status: 'Processing' },
+                { id: 3, date: 'Aug 12', time: '09:35 AM', name: 'Battery', category: 'Hazardous', confidence: '94', method: 'AI', points: 25, status: 'Sent to Partner' },
+                { id: 4, date: 'Aug 11', time: '02:15 PM', name: 'Coffee Cup', category: 'General', confidence: '62', method: 'User', points: 2, status: 'Collected' },
+                { id: 5, date: 'Aug 10', time: '11:20 AM', name: 'Cardboard Box', category: 'Recyclable', confidence: '99', method: 'AI', points: 10, status: 'Processed' }
+            ];
+            localStorage.setItem(historyKey, JSON.stringify(demoHistory));
+        }
+
+        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        const tbody = document.getElementById('collectionBody');
+        const emptyState = document.getElementById('emptyState');
+        
+        let filtered = history;
+        if (filter !== 'All') {
+            filtered = history.filter(item => item.category === filter);
+        }
+
+        tbody.innerHTML = '';
+        
+        if (filtered.length === 0) {
+            emptyState.style.display = 'block';
+        } else {
+            emptyState.style.display = 'none';
+            filtered.forEach(item => {
+                const tr = document.createElement('tr');
+                
+                let catClass = '';
+                if(item.category === 'Recyclable') catClass = 'cat-recyclable';
+                else if(item.category === 'Organic') catClass = 'cat-organic';
+                else if(item.category === 'Hazardous') catClass = 'cat-hazardous';
+                else catClass = 'cat-general';
+                
+                tr.innerHTML = `
+                    <td>${item.date}</td>
+                    <td class="text-muted">${item.time}</td>
+                    <td style="font-weight: 500;">${item.name}</td>
+                    <td><span class="badge-cat ${catClass}">${item.category}</span></td>
+                    <td>${item.confidence}%</td>
+                    <td>${item.method}</td>
+                    <td class="pts-col">+${item.points}</td>
+                    <td>${item.status}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+    }
+</script>
+</body>
+</html>

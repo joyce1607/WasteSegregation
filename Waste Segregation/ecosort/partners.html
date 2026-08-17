@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Partners | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .partner-card {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .partner-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .partner-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .partner-type {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .partner-stats {
+            background: #f9f9f9;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: auto;
+        }
+        
+        .lifecycle-diagram {
+            background: var(--bg-main);
+            padding: 2rem;
+            border-radius: var(--border-radius-md);
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .flow-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            max-width: 900px;
+            margin: 2rem auto 0;
+            position: relative;
+        }
+        
+        .flow-container::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: #ddd;
+            z-index: 1;
+        }
+
+        .flow-node {
+            background: white;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            z-index: 2;
+            border: 2px solid var(--primary-color);
+        }
+        
+        .flow-node::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-main);
+            white-space: nowrap;
+        }
+        
+        @media (max-width: 768px) {
+            .flow-container {
+                flex-direction: column;
+            }
+            .flow-container::before {
+                top: 5%; bottom: 5%;
+                left: 50%; width: 2px; height: auto;
+            }
+            .flow-node::after {
+                bottom: auto;
+                left: 90px;
+                transform: none;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    
+
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">Where Does My Waste Go?</h2></div>
+
+        <div class="content-wrapper">
+            
+            <div class="lifecycle-diagram">
+                <h3 style="margin-bottom: 0.5rem;">The Circular Waste Journey</h3>
+                <p class="text-muted">Waste doesn't just disappear. Here is how your sorted items are processed.</p>
+                
+                <div class="flow-container">
+                    <div class="flow-node" data-label="AI Sorting"><i class="fa-solid fa-robot"></i></div>
+                    <div class="flow-node" data-label="Collection"><i class="fa-solid fa-truck"></i></div>
+                    <div class="flow-node" data-label="Processing Facility"><i class="fa-solid fa-industry"></i></div>
+                    <div class="flow-node" data-label="Material Recovery"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="flow-node" data-label="New Products"><i class="fa-solid fa-box-open"></i></div>
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 1.5rem;">Authorized Processing Partners (Demo Data)</h3>
+            
+            <div class="flex gap-4" style="flex-wrap: wrap;">
+                
+                <!-- Recycling -->
+                <div class="card partner-card" style="flex: 1; min-width: 300px;">
+                    <div class="partner-header">
+                        <div class="partner-logo" style="background: #2196f3;"><i class="fa-solid fa-recycle"></i></div>
+                        <div>
+                            <div class="partner-type" style="color: #2196f3;">Material Recycling</div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">GreenCycle Corp</h3>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Processes plastic, paper, and metal items into raw materials for manufacturing.</p>
+                    <div class="partner-stats">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            <span class="font-bold">Items Received:</span>
+                            <span>142 (Demo)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span class="font-bold">Status:</span>
+                            <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Processing Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Organic -->
+                <div class="card partner-card" style="flex: 1; min-width: 300px;">
+                    <div class="partner-header">
+                        <div class="partner-logo" style="background: #4caf50;"><i class="fa-solid fa-leaf"></i></div>
+                        <div>
+                            <div class="partner-type" style="color: #4caf50;">Organic Processing</div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">BioSoil Solutions</h3>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Converts food and organic waste into high-quality compost and biofertilizer (soil amendment).</p>
+                    <div class="partner-stats">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            <span class="font-bold">Items Received:</span>
+                            <span>96 (Demo)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span class="font-bold">Status:</span>
+                            <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Processing Active</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Energy -->
+                <div class="card partner-card" style="flex: 1; min-width: 300px;">
+                    <div class="partner-header">
+                        <div class="partner-logo" style="background: #fbc02d;"><i class="fa-solid fa-bolt"></i></div>
+                        <div>
+                            <div class="partner-type" style="color: #fbc02d;">Energy Recovery</div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">PowerWaste Inc</h3>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Safely incinerates suitable non-recyclable waste to generate electricity and heat.</p>
+                    <div class="partner-stats">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            <span class="font-bold">Items Received:</span>
+                            <span>60 (Demo)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span class="font-bold">Status:</span>
+                            <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Processing Active</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Hazardous -->
+                <div class="card partner-card" style="flex: 1; min-width: 300px;">
+                    <div class="partner-header">
+                        <div class="partner-logo" style="background: #f44336;"><i class="fa-solid fa-biohazard"></i></div>
+                        <div>
+                            <div class="partner-type" style="color: #f44336;">Hazardous Handling</div>
+                            <h3 style="margin: 0; font-size: 1.1rem;">SafeTox Facilities</h3>
+                        </div>
+                    </div>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Safely dismantles e-waste and neutralizes batteries/chemicals to prevent contamination.</p>
+                    <div class="partner-stats">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem; font-size: 0.9rem;">
+                            <span class="font-bold">Items Received:</span>
+                            <span>28 (Demo)</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                            <span class="font-bold">Status:</span>
+                            <span style="color: var(--success);"><i class="fa-solid fa-circle-check"></i> Processing Active</span>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

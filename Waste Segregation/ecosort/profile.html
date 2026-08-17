@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: white;
+            font-size: 3.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .profile-title h2 {
+            margin-bottom: 0.25rem;
+            font-size: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-main);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius-sm);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    
+
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">My Profile</h2></div>
+
+        <div class="content-wrapper">
+            <div class="card">
+                <div class="profile-header">
+                    <div class="profile-avatar" id="bigAvatar">U</div>
+                    <div class="profile-title">
+                        <h2 id="profName">User Name</h2>
+                        <div class="text-muted" id="profEmail">user@example.com</div>
+                        <div style="margin-top: 0.5rem; display: inline-block; background: rgba(46, 125, 50, 0.1); color: var(--primary-color); padding: 0.25rem 0.75rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;" id="profLevel">
+                            🌱 Eco Beginner
+                        </div>
+                    </div>
+                </div>
+                
+                <h3 style="margin-bottom: 1.5rem; padding-bottom: 0.5rem; border-bottom: 1px solid #eee;">Edit Information</h3>
+                
+                <form id="profileForm" style="max-width: 600px;">
+                    <div class="flex gap-2" style="flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>Full Name</label>
+                            <input type="text" id="editName" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>Email Address</label>
+                            <input type="email" id="editEmail" class="form-control" readonly style="background: #f5f5f5; cursor: not-allowed;">
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-2" style="flex-wrap: wrap;">
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>House Number</label>
+                            <input type="text" id="editHouseNo" class="form-control">
+                        </div>
+                        <div class="form-group" style="flex: 1; min-width: 250px;">
+                            <label>Area / Neighborhood</label>
+                            <input type="text" id="editArea" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-top: 1.5rem;">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                        <button type="button" onclick="logout()" class="btn" style="background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                        <span id="saveMsg" style="color: var(--success); font-weight: 500; display: none;">Saved successfully!</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const user = checkAuth();
+        if (!user) return;
+        
+        document.getElementById('bigAvatar').textContent = user.fullName.charAt(0).toUpperCase();
+        document.getElementById('profName').textContent = user.fullName;
+        document.getElementById('profEmail').textContent = user.email;
+        document.getElementById('profLevel').textContent = user.level;
+        
+        document.getElementById('editName').value = user.fullName;
+        document.getElementById('editEmail').value = user.email;
+        document.getElementById('editHouseNo').value = user.houseNo || '';
+        document.getElementById('editArea').value = user.area || '';
+        
+        document.getElementById('profileForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            user.fullName = document.getElementById('editName').value;
+            user.houseNo = document.getElementById('editHouseNo').value;
+            user.area = document.getElementById('editArea').value;
+            
+            localStorage.setItem('ecosort_current_user', JSON.stringify(user));
+            
+            // Also update the global list so changes persist on re-login
+            let usersList = JSON.parse(localStorage.getItem('ecosort_users')) || [];
+            let userIndex = usersList.findIndex(u => u.id === user.id);
+            if (userIndex !== -1) {
+                usersList[userIndex] = user;
+                localStorage.setItem('ecosort_users', JSON.stringify(usersList));
+            }
+            
+            // update UI
+            updateGlobalUI(user);
+            document.getElementById('bigAvatar').textContent = user.fullName.charAt(0).toUpperCase();
+            document.getElementById('profName').textContent = user.fullName;
+            
+            const msg = document.getElementById('saveMsg');
+            msg.style.display = 'inline';
+            setTimeout(() => msg.style.display = 'none', 3000);
+        });
+    });
+</script>
+</body>
+</html>

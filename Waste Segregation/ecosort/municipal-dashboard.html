@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Dashboard | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/municipal.css">
+    <link rel="stylesheet" href="css/radial_layout.css">
+    <style>
+        .municipal-body .radial-orbit-container {
+            margin: 2rem auto;
+            transform: scale(0.9);
+        }
+        .municipal-body .orbit-node { cursor: pointer; }
+    </style>
+</head>
+<body class="municipal-body">
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fa-solid fa-city" style="color: var(--neon-green);"></i> EcoSort</h3>
+            <p>Municipal Control</p>
+        </div>
+        
+        <ul class="sidebar-nav">
+            <li class="nav-item active" onclick="showSection('overview', this)">
+                <i class="fa-solid fa-chart-pie"></i> Overview
+            </li>
+            <li class="nav-item" onclick="showSection('collection', this)">
+                <i class="fa-solid fa-truck"></i> Waste Collection
+            </li>
+            <li class="nav-item" onclick="showSection('pickup', this)">
+                <i class="fa-solid fa-truck-pickup"></i> Pickup Requests
+            </li>
+            <li class="nav-item" onclick="showSection('map', this)">
+                <i class="fa-solid fa-map-location-dot"></i> Collection Map
+            </li>
+            <li class="nav-item" onclick="showSection('bins', this)">
+                <i class="fa-solid fa-trash-can"></i> Smart Bins
+            </li>
+            <li class="nav-item" onclick="showSection('recycling', this)">
+                <i class="fa-solid fa-recycle"></i> Recycling
+            </li>
+            <li class="nav-item" onclick="showSection('organic', this)">
+                <i class="fa-solid fa-seedling"></i> Organic Waste
+            </li>
+            <li class="nav-item" onclick="showSection('energy', this)">
+                <i class="fa-solid fa-bolt"></i> Energy Recovery
+            </li>
+            <li class="nav-item" onclick="showSection('hazardous', this)">
+                <i class="fa-solid fa-triangle-exclamation"></i> Hazardous Waste
+            </li>
+            <li class="nav-item" onclick="showSection('flow', this)">
+                <i class="fa-solid fa-network-wired"></i> Processing Flow
+            </li>
+            <li class="nav-item" onclick="showSection('journey', this)">
+                <i class="fa-solid fa-route"></i> Waste Journey
+            </li>
+            <li class="nav-item" onclick="showSection('partners', this)">
+                <i class="fa-solid fa-building"></i> Processing Partners
+            </li>
+            <li class="nav-item" onclick="showSection('impact', this)">
+                <i class="fa-solid fa-earth-americas"></i> Environmental Impact
+            </li>
+            <li class="nav-item" onclick="showSection('analytics', this)">
+                <i class="fa-solid fa-chart-line"></i> Analytics
+            </li>
+            <li class="nav-item" onclick="showSection('citizens', this)">
+                <i class="fa-solid fa-users"></i> Citizen Participation
+            </li>
+        </ul>
+        
+        <div class="sidebar-footer">
+            <div class="nav-item" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        
+        <!-- Header -->
+        <header class="top-header">
+            <h2 id="pageTitle">Overview Dashboard</h2>
+            <div class="header-user">
+                <span>Demo Admin</span>
+                <div class="avatar"><i class="fa-solid fa-user-tie"></i></div>
+            </div>
+        </header>
+
+        <!-- 1. OVERVIEW SECTION -->
+        <section id="section-overview" class="dashboard-section active">
+            <!-- New Radial Menu Layout -->
+            <section class="radial-orbit-container">
+                <!-- Outer Ring -->
+                <div class="orbit-ring"></div>
+                
+                <!-- Center Big Button -->
+                <a href="#" class="center-scan-btn" style="border-color: rgba(33, 150, 243, 0.3);">
+                    <i class="fa-solid fa-city" style="color: #1976d2;"></i>
+                    <span style="color: #1565c0;">MUNICIPAL CONTROL</span>
+                </a>
+                
+                <!-- Orbital Nodes -->
+                <!-- Node 1: Collection (Top) -->
+                <div class="orbit-node node-1" onclick="showSection('collection', document.querySelectorAll('.nav-item')[1])">
+                    <div class="node-circle" style="color: #2e7d32;"><i class="fa-solid fa-truck"></i></div>
+                    <div class="node-text">
+                        <strong>WASTE COLLECTION</strong>
+                        <span>Area tracking</span>
+                    </div>
+                </div>
+                
+                <!-- Node 2: Map (Top Right) -->
+                <div class="orbit-node node-2" onclick="showSection('map', document.querySelectorAll('.nav-item')[2])">
+                    <div class="node-circle" style="color: #9b59b6;"><i class="fa-solid fa-map-location-dot"></i></div>
+                    <div class="node-text">
+                        <strong>COLLECTION MAP</strong>
+                        <span>Live routes & bins</span>
+                    </div>
+                </div>
+                
+                <!-- Node 3: Bins (Bottom Right) -->
+                <div class="orbit-node node-3" onclick="showSection('bins', document.querySelectorAll('.nav-item')[3])">
+                    <div class="node-circle" style="color: #e67e22;"><i class="fa-solid fa-trash-can"></i></div>
+                    <div class="node-text">
+                        <strong>SMART BINS</strong>
+                        <span>Capacity status</span>
+                    </div>
+                </div>
+                
+                <!-- Node 4: Analytics (Bottom) -->
+                <div class="orbit-node node-4" onclick="showSection('analytics', document.querySelectorAll('.nav-item')[12])">
+                    <div class="node-circle" style="color: #3498db;"><i class="fa-solid fa-chart-line"></i></div>
+                    <div class="node-text">
+                        <strong>ANALYTICS</strong>
+                        <span>View reporting</span>
+                    </div>
+                </div>
+                
+                <!-- Node 5: Journey (Bottom Left) -->
+                <div class="orbit-node node-5" onclick="showSection('journey', document.querySelectorAll('.nav-item')[9])">
+                    <div class="node-circle" style="color: #f39c12;"><i class="fa-solid fa-route"></i></div>
+                    <div class="node-text">
+                        <strong>WASTE JOURNEY</strong>
+                        <span>Track life cycle</span>
+                    </div>
+                </div>
+                
+                <!-- Node 6: Recycling (Top Left) -->
+                <div class="orbit-node node-6" onclick="showSection('recycling', document.querySelectorAll('.nav-item')[4])">
+                    <div class="node-circle" style="color: #00838f;"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="node-text">
+                        <strong>RECYCLING DATA</strong>
+                        <span>Material recovery</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="metric-grid" style="margin-top: 3rem;">
+                <div class="metric-card">
+                    <div class="metric-icon"><i class="fa-solid fa-trash"></i></div>
+                    <div class="metric-info">
+                        <h4>Total Collected</h4>
+                        <div class="value" id="overview-total">12,450 <small>kg</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div class="metric-info">
+                        <h4>Recycled</h4>
+                        <div class="value" id="overview-recycled">6,820 <small>kg</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><i class="fa-solid fa-seedling"></i></div>
+                    <div class="metric-info">
+                        <h4>Organic Processed</h4>
+                        <div class="value" id="overview-organic">3,250 <small>kg</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="metric-info">
+                        <h4>Energy Recovery</h4>
+                        <div class="value" id="overview-energy">1,780 <small>kg</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon" style="color: #ff6b6b;"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <div class="metric-info">
+                        <h4>Hazardous</h4>
+                        <div class="value" id="overview-hazardous">620 <small>kg</small></div>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon"><i class="fa-solid fa-truck"></i></div>
+                    <div class="metric-info">
+                        <h4>Collections Today</h4>
+                        <div class="value" id="overview-collections">184</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. WASTE COLLECTION SECTION -->
+        <section id="section-collection" class="dashboard-section">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <h3>Waste Collection by Area</h3>
+                    <select class="filter-select">
+                        <option>Today</option>
+                        <option>This Week</option>
+                        <option>This Month</option>
+                        <option>This Year</option>
+                    </select>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Area</th>
+                            <th>Waste Collected</th>
+                            <th>Smart Bins</th>
+                            <th>Collection Status</th>
+                            <th>Last Collection</th>
+                            <th>Collection Vehicle</th>
+                        </tr>
+                    </thead>
+                    <tbody id="collection-table-body">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- PICKUP REQUESTS SECTION -->
+        <section id="section-pickup" class="dashboard-section">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <h3>Waste Pickup Requests</h3>
+                    <select class="filter-select" id="pickupFilter" onchange="filterPickupRequests()">
+                        <option value="All">All Requests</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Accepted">Accepted</option>
+                        <option value="Collector Assigned">Collector Assigned</option>
+                        <option value="Collected">Collected</option>
+                    </select>
+                </div>
+                
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Request ID</th>
+                                <th>User & Location</th>
+                                <th>Waste Type</th>
+                                <th>Requested Time</th>
+                                <th>Status</th>
+                                <th style="min-width: 250px;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pickup-table-body">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 3. MAP SECTION -->
+        <section id="section-map" class="dashboard-section">
+            <div class="card" style="padding: 0; overflow: hidden; height: 600px;">
+                <div id="municipal-map" style="width: 100%; height: 100%;"></div>
+            </div>
+            <p class="demo-badge" style="margin-top: 1rem;">Map Demo Data</p>
+        </section>
+
+        <!-- 4. SMART BINS SECTION -->
+        <section id="section-bins" class="dashboard-section">
+            <div class="card">
+                <h3>Smart Bin Status</h3>
+                <div class="bins-grid" id="bins-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. RECYCLING SECTION -->
+        <section id="section-recycling" class="dashboard-section">
+            <div class="split-layout">
+                <div class="card">
+                    <h3>Recycling Breakdown</h3>
+                    <table class="simple-table">
+                        <tr><td>Plastic</td><td class="text-right">2,850 kg</td></tr>
+                        <tr><td>Paper</td><td class="text-right">1,920 kg</td></tr>
+                        <tr><td>Metal</td><td class="text-right">1,240 kg</td></tr>
+                        <tr><td>Glass</td><td class="text-right">810 kg</td></tr>
+                        <tr style="border-top: 2px solid rgba(255,255,255,0.1); font-weight: bold;">
+                            <td>Total</td><td class="text-right" style="color: var(--neon-green);">6,820 kg</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card">
+                    <canvas id="recyclingChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. ORGANIC WASTE SECTION -->
+        <section id="section-organic" class="dashboard-section">
+            <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+                <i class="fa-solid fa-seedling" style="font-size: 3rem; color: #a9dfbf; margin-bottom: 1rem;"></i>
+                <h2>Organic Waste Collected: 3,250 kg</h2>
+                
+                <div style="margin: 3rem 0;">
+                    <p style="text-align: left; margin-bottom: 0.5rem;">Processing Status</p>
+                    <div class="progress-bar-bg">
+                        <div class="progress-bar-fill" style="width: 82%;">82%</div>
+                    </div>
+                </div>
+
+                <div class="outputs-box">
+                    <h4>Outputs Generated:</h4>
+                    <div class="output-item"><i class="fa-solid fa-leaf"></i> Compost</div>
+                    <div class="output-item"><i class="fa-solid fa-mound"></i> Soil Amendment</div>
+                    <div class="output-item"><i class="fa-solid fa-fire-flame-simple"></i> Biogas</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. ENERGY RECOVERY SECTION -->
+        <section id="section-energy" class="dashboard-section">
+            <div class="card">
+                <div class="energy-stats text-center">
+                    <i class="fa-solid fa-bolt" style="font-size: 3rem; color: #f1c40f; margin-bottom: 1rem;"></i>
+                    <h2>Energy Recovery</h2>
+                    <p class="text-muted">Converting suitable non-recyclable waste into electricity.</p>
+                    
+                    <div class="stats-row" style="margin-top: 3rem;">
+                        <div class="stat-box">
+                            <div class="stat-label">Waste Received</div>
+                            <div class="stat-value">1,780 kg</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-label">Waste Processed</div>
+                            <div class="stat-value">1,650 kg</div>
+                        </div>
+                        <div class="stat-box highlight-box">
+                            <div class="stat-label">Estimated Energy</div>
+                            <div class="stat-value" style="color: #f1c40f;">2,450 kWh</div>
+                        </div>
+                    </div>
+                    
+                    <div class="partner-info" style="margin-top: 3rem;">
+                        <p><strong>Status:</strong> <span class="badge badge-success">Processing</span></p>
+                        <p><strong>Partner:</strong> Demo Energy Facility</p>
+                    </div>
+                </div>
+            </div>
+            <p class="demo-badge text-center" style="margin-top: 1rem;">Estimated / Demo Data</p>
+        </section>
+
+        <!-- 8. HAZARDOUS WASTE SECTION -->
+        <section id="section-hazardous" class="dashboard-section">
+            <div class="card text-center" style="max-width: 600px; margin: 0 auto;">
+                <i class="fa-solid fa-skull-crossbones" style="font-size: 3rem; color: #ff6b6b; margin-bottom: 1rem;"></i>
+                <h2>Hazardous Waste: 620 kg</h2>
+                
+                <div class="stats-row" style="margin-top: 2rem;">
+                    <div class="stat-box">
+                        <div class="stat-label">E-Waste</div>
+                        <div class="stat-value">480 kg</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Batteries/Chemicals</div>
+                        <div class="stat-value">140 kg</div>
+                    </div>
+                </div>
+                
+                <div class="alert-box" style="background: rgba(255, 107, 107, 0.1); border: 1px solid #ff6b6b; padding: 1.5rem; margin-top: 2rem; border-radius: 10px;">
+                    <h4>Status: Secure</h4>
+                    <p>Sent to appropriate authorized processing facilities for safe handling.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 9. PROCESSING FLOW SECTION -->
+        <section id="section-flow" class="dashboard-section">
+            <div class="card">
+                <h3 class="text-center" style="margin-bottom: 3rem;">Waste Processing Flow</h3>
+                
+                <div class="flow-diagram">
+                    <div class="flow-node main-node">
+                        <i class="fa-solid fa-trash-can"></i>
+                        <span>TOTAL WASTE</span>
+                    </div>
+                    
+                    <div class="flow-arrow-down"></div>
+                    
+                    <div class="flow-branches">
+                        <!-- Recycle -->
+                        <div class="flow-branch">
+                            <div class="flow-node sub-node">
+                                <i class="fa-solid fa-recycle" style="color: var(--neon-green);"></i>
+                                <span>Recycle</span>
+                            </div>
+                            <div class="flow-arrow-down small-arrow"></div>
+                            <div class="flow-end">New Material</div>
+                        </div>
+                        
+                        <!-- Organic -->
+                        <div class="flow-branch">
+                            <div class="flow-node sub-node">
+                                <i class="fa-solid fa-seedling" style="color: #a9dfbf;"></i>
+                                <span>Organic</span>
+                            </div>
+                            <div class="flow-arrow-down small-arrow"></div>
+                            <div class="flow-end">Compost / Biogas</div>
+                        </div>
+                        
+                        <!-- Energy -->
+                        <div class="flow-branch">
+                            <div class="flow-node sub-node">
+                                <i class="fa-solid fa-bolt" style="color: #f1c40f;"></i>
+                                <span>Energy</span>
+                            </div>
+                            <div class="flow-arrow-down small-arrow"></div>
+                            <div class="flow-end">Energy Recovery</div>
+                        </div>
+                        
+                        <!-- Hazardous -->
+                        <div class="flow-branch">
+                            <div class="flow-node sub-node">
+                                <i class="fa-solid fa-triangle-exclamation" style="color: #ff6b6b;"></i>
+                                <span>Hazardous</span>
+                            </div>
+                            <div class="flow-arrow-down small-arrow"></div>
+                            <div class="flow-end">Safe Processing</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 10. WASTE JOURNEY SECTION -->
+        <section id="section-journey" class="dashboard-section">
+            <div class="card">
+                <h3>Track Waste Batch</h3>
+                <select class="filter-select" style="margin-bottom: 2rem;">
+                    <option>Batch #A742 (Plastic)</option>
+                    <option>Batch #B891 (Organic)</option>
+                    <option>Batch #C104 (E-Waste)</option>
+                </select>
+
+                <div class="timeline">
+                    <div class="timeline-item complete">
+                        <div class="timeline-icon"><i class="fa-solid fa-trash"></i></div>
+                        <div class="timeline-content">
+                            <h4>Collected</h4>
+                            <p>Smart Bin #101, Area A</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item complete">
+                        <div class="timeline-icon"><i class="fa-solid fa-truck"></i></div>
+                        <div class="timeline-content">
+                            <h4>Transported</h4>
+                            <p>Vehicle #V04</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item complete">
+                        <div class="timeline-icon"><i class="fa-solid fa-building"></i></div>
+                        <div class="timeline-content">
+                            <h4>Collection Center</h4>
+                            <p>Central Hub - Sorted and batched</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item active">
+                        <div class="timeline-icon"><i class="fa-solid fa-recycle"></i></div>
+                        <div class="timeline-content">
+                            <h4>Processing Partner</h4>
+                            <p>Demo Recycling Corp - In Processing</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item pending">
+                        <div class="timeline-icon"><i class="fa-solid fa-box"></i></div>
+                        <div class="timeline-content">
+                            <h4>Final Output</h4>
+                            <p>Recycled Material Ready</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 11. ENVIRONMENTAL IMPACT SECTION -->
+        <section id="section-impact" class="dashboard-section">
+            <div class="card text-center">
+                <i class="fa-solid fa-earth-americas" style="font-size: 4rem; color: #4facfe; margin-bottom: 2rem;"></i>
+                <h2>Environmental Impact</h2>
+                
+                <div class="impact-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 3rem;">
+                    <div class="impact-card">
+                        <div class="impact-value">12,450 kg</div>
+                        <div class="impact-label">Total Waste Diverted</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-value">6,820 kg</div>
+                        <div class="impact-label">Recycled Waste</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-value">3,250 kg</div>
+                        <div class="impact-label">Organic Processed</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-value">1,780 kg</div>
+                        <div class="impact-label">Sent for Energy</div>
+                    </div>
+                    <div class="impact-card">
+                        <div class="impact-value">620 kg</div>
+                        <div class="impact-label">Hazardous Safely Handled</div>
+                    </div>
+                    <div class="impact-card highlight">
+                        <div class="impact-value">95%</div>
+                        <div class="impact-label">Estimated Landfill Diversion</div>
+                    </div>
+                </div>
+            </div>
+            <p class="demo-badge text-center" style="margin-top: 1rem;">Estimated Data</p>
+        </section>
+
+        <!-- 12. ANALYTICS SECTION -->
+        <section id="section-analytics" class="dashboard-section">
+            <div class="card">
+                <div class="card-header flex-between">
+                    <h3>Area-Wise Analytics</h3>
+                    <select class="filter-select">
+                        <option>Monthly</option>
+                        <option>Weekly</option>
+                        <option>Yearly</option>
+                    </select>
+                </div>
+                <div style="height: 400px; width: 100%;">
+                    <canvas id="areaChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- 13. CITIZEN PARTICIPATION SECTION -->
+        <section id="section-citizens" class="dashboard-section">
+            <div class="split-layout">
+                <div class="card">
+                    <h3>Participation Stats</h3>
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <div class="stat-value">1,204</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">845k</div>
+                            <div class="stat-label">Total Eco Points</div>
+                        </div>
+                    </div>
+                    
+                    <h4 style="margin-top: 2rem; margin-bottom: 1rem;">Top Eco Citizens</h4>
+                    <table class="simple-table">
+                        <tr><td>🥇 Rahul</td><td class="text-right" style="color: var(--neon-green);">12,850 pts</td></tr>
+                        <tr><td>🥈 Priya</td><td class="text-right" style="color: var(--neon-green);">11,420 pts</td></tr>
+                        <tr><td>🥉 Joyce</td><td class="text-right" style="color: var(--neon-green);">10,875 pts</td></tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3>Department Eco Challenge</h3>
+                    <div class="challenge-bars">
+                        <div class="bar-row">
+                            <div class="bar-label">CSE</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 100%;">82,450 pts</div></div>
+                        </div>
+                        <div class="bar-row" style="margin-top: 1rem;">
+                            <div class="bar-label">ECE</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 90%;">76,210 pts</div></div>
+                        </div>
+                        <div class="bar-row" style="margin-top: 1rem;">
+                            <div class="bar-label">EEE</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 80%;">68,920 pts</div></div>
+                        </div>
+                        <div class="bar-row" style="margin-top: 1rem;">
+                            <div class="bar-label">MECH</div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" style="width: 65%;">54,120 pts</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 14. PROCESSING PARTNERS SECTION -->
+        <section id="section-partners" class="dashboard-section">
+            <div class="card">
+                <h3>Processing Partners</h3>
+                <div class="partners-grid" id="partners-container">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+            <p class="demo-badge" style="margin-top: 1rem;">Demo Partners</p>
+        </section>
+
+    </main>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Custom Municipal JS -->
+    <script src="js/municipal.js"></script>
+</body>
+</html>

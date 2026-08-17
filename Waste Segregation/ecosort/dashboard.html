@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/radial_layout.css">
+</head>
+<body class="radial-dashboard">
+
+    <div class="radial-container">
+        <!-- Header -->
+        <header class="radial-header">
+            <div class="header-left">
+                <i class="fa-solid fa-leaf"></i> EcoSort
+                <span style="font-size: 0.8rem; font-weight: 500; color: #555; margin-left: 0.5rem;"><br>AI Waste Management</span>
+            </div>
+            
+            <div class="header-center">
+                <h1>AI-Powered Waste Management</h1>
+                <p>Scan. Sort. Recycle. Build a <span>Better Tomorrow.</span></p>
+            </div>
+            
+            <div class="header-right">
+                <a href="alerts.html" class="bell-icon" style="color: inherit; text-decoration: none; display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="bell-badge">3</span>
+                </a>
+                <div class="profile-pill" onclick="window.location.href='profile.html'" style="cursor: pointer;">
+                    <div id="topAvatar" style="width: 40px; height: 40px; border-radius: 50%; background: #4caf50; color: white; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.2rem;">U</div>
+                    <div class="profile-info">
+                        <h4 id="welcomeMsg">Hi, User</h4>
+                        <span>Eco Warrior</span>
+                    </div>
+                </div>
+                <button onclick="logout()" style="background: transparent; border: 1px solid #ff5252; color: #ff5252; border-radius: 20px; padding: 0.5rem 1rem; margin-left: 1rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; font-family: inherit; font-weight: 500;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Layout -->
+        <main class="radial-content">
+            
+            <!-- Left Panel: Impact -->
+            <aside class="glass-panel left-panel">
+                <div class="impact-header">
+                    <i class="fa-solid fa-leaf"></i> Today's Impact
+                </div>
+                
+                <div class="impact-item">
+                    <div class="impact-icon"><i class="fa-solid fa-weight-hanging"></i></div>
+                    <div>
+                        <p class="impact-val" id="valPoints">2.4 kg</p>
+                        <p class="impact-lbl">Waste Recycled</p>
+                    </div>
+                </div>
+                
+                <div class="impact-item">
+                    <div class="impact-icon"><i class="fa-solid fa-recycle"></i></div>
+                    <div>
+                        <p class="impact-val" id="valScore">78%</p>
+                        <p class="impact-lbl">Recycling Rate</p>
+                    </div>
+                </div>
+                
+                <div class="impact-item">
+                    <div class="impact-icon"><i class="fa-solid fa-cloud"></i></div>
+                    <div>
+                        <p class="impact-val">4.2 kg</p>
+                        <p class="impact-lbl">CO₂ Avoided</p>
+                    </div>
+                </div>
+                
+                <div class="impact-bottom">
+                    Great going! 🌱
+                </div>
+            </aside>
+
+            <!-- Center Radial UI -->
+            <section class="radial-orbit-container">
+                <!-- Outer Ring -->
+                <div class="orbit-ring"></div>
+                
+                <!-- Center Big Button -->
+                <a href="scanner.html" class="center-scan-btn">
+                    <i class="fa-solid fa-camera"></i>
+                    <span>SCAN WASTE</span>
+                    <small>Click or capture image<br>to scan waste</small>
+                </a>
+                
+                <!-- Orbital Nodes -->
+                <!-- Node 1: Map (Top) -->
+                <a href="map.html" class="orbit-node node-1">
+                    <div class="node-circle" style="color: #2e7d32;"><i class="fa-solid fa-location-dot"></i></div>
+                    <div class="node-text">
+                        <strong>RECYCLING MAP</strong>
+                        <span>Find nearby recycling<br>centers</span>
+                    </div>
+                </a>
+                
+                <!-- Node 2: Collection Tracker (Top Right) -->
+                <a href="collection.html" class="orbit-node node-2">
+                    <div class="node-circle" style="color: #9b59b6;"><i class="fa-solid fa-truck"></i></div>
+                    <div class="node-text">
+                        <strong>COLLECTION TRACKER</strong>
+                        <span>Track waste collection<br>in your area</span>
+                    </div>
+                </a>
+                
+                <!-- Node 3: Impact (Bottom Right) -->
+                <a href="impact.html" class="orbit-node node-3">
+                    <div class="node-circle" style="color: #e67e22;"><i class="fa-solid fa-chart-simple"></i></div>
+                    <div class="node-text">
+                        <strong>IMPACT</strong>
+                        <span>See your contribution<br>to the environment</span>
+                    </div>
+                </a>
+                
+                <!-- Node 4: Profile (Bottom) -->
+                <a href="profile.html" class="orbit-node node-4">
+                    <div class="node-circle" style="color: #3498db;"><i class="fa-solid fa-user"></i></div>
+                    <div class="node-text">
+                        <strong>PROFILE</strong>
+                        <span>View your profile<br>and activity</span>
+                    </div>
+                </a>
+                
+                <!-- Node 5: Reminder (Bottom Left) -->
+                <a href="alerts.html" class="orbit-node node-5" id="reminderMenuBtn">
+                    <div class="node-circle" style="color: #f39c12;"><i class="fa-regular fa-bell"></i></div>
+                    <div class="node-text">
+                        <strong>COLLECTION REMINDER</strong>
+                        <span>Get reminder for<br>waste collection days</span>
+                    </div>
+                </a>
+                
+                <!-- Node 6: AI Scanner (Top Left) -->
+                <a href="scanner.html" class="orbit-node node-6">
+                    <div class="node-circle" style="color: #00838f;"><i class="fa-solid fa-robot"></i></div>
+                    <div class="node-text">
+                        <strong>AI SCANNER</strong>
+                        <span>Identify waste and<br>get proper guidance</span>
+                    </div>
+                </a>
+            </section>
+            
+            <!-- Right Panel: Reminders Collection -->
+            <aside class="glass-panel right-panel">
+                <div class="coll-header">
+                    <i class="fa-regular fa-calendar-check"></i> Upcoming Collection
+                </div>
+                
+                <div class="coll-item">
+                    <div class="coll-icon icon-blue"><i class="fa-solid fa-bottle-water"></i></div>
+                    <div>
+                        <p class="coll-title">Plastic Waste</p>
+                        <p class="coll-time">Tomorrow, 8:00 AM</p>
+                    </div>
+                </div>
+                
+                <div class="coll-item">
+                    <div class="coll-icon icon-green"><i class="fa-solid fa-leaf"></i></div>
+                    <div>
+                        <p class="coll-title">Organic Waste</p>
+                        <p class="coll-time">Friday, 8:00 AM</p>
+                    </div>
+                </div>
+                
+                <div class="coll-item">
+                    <div class="coll-icon icon-purple"><i class="fa-solid fa-desktop"></i></div>
+                    <div>
+                        <p class="coll-title">E-Waste</p>
+                        <p class="coll-time">Next Monday, 8:00 AM</p>
+                    </div>
+                </div>
+                
+                <a href="map.html" class="view-full-btn">
+                    View Full Schedule <i class="fa-solid fa-chevron-right"></i>
+                </a>
+            </aside>
+            
+        </main>
+    </div>
+
+    <!-- Script to dynamically load username if possible -->
+    <script src="js/auth.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('ecosort_current_user'));
+            if(user) {
+                document.getElementById('welcomeMsg').textContent = `Hi, ${user.fullName.split(' ')[0]}`;
+                document.getElementById('topAvatar').textContent = user.fullName.charAt(0).toUpperCase();
+            }
+        });
+    </script>
+</body>
+</html>

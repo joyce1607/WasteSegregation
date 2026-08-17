@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificates | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <!-- Html2Canvas for downloading -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        .cert-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .cert-card {
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid #eee;
+            transition: all var(--transition-fast);
+        }
+        
+        .cert-card:hover {
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .cert-icon {
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        /* Certificate Template (Hidden by default, used for generation) */
+        #certificateWrapper {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+        }
+
+        .certificate-template {
+            width: 800px;
+            height: 600px;
+            background: #fff;
+            padding: 40px;
+            box-sizing: border-box;
+            position: relative;
+        }
+        
+        .cert-inner {
+            border: 10px solid var(--primary-color);
+            height: 100%;
+            padding: 40px;
+            text-align: center;
+            background: #fafafa;
+            position: relative;
+        }
+
+        .cert-inner::before {
+            content: '';
+            position: absolute;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            border: 1px solid var(--primary-dark);
+        }
+        
+        .cert-logo {
+            font-size: 2rem;
+            font-family: 'Inter', sans-serif;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+        }
+        
+        .cert-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #222;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        
+        .cert-text {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        
+        .cert-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            border-bottom: 2px solid #ccc;
+            display: inline-block;
+            padding: 0 40px 10px;
+        }
+        
+        .cert-reason {
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1rem;
+            color: #555;
+            max-width: 600px;
+            margin: 0 auto 40px;
+        }
+        
+        .cert-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 50px;
+            padding: 0 40px;
+        }
+        
+        .signature-block {
+            text-align: center;
+        }
+        
+        .signature-line {
+            width: 200px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 10px;
+            font-family: 'Playfair Display', cursive;
+            font-size: 1.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .cert-id {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #999;
+            font-family: monospace;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            background: none; border: none; font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .preview-img {
+            width: 100%;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    
+
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">My Certificates</h2></div>
+
+        <div class="content-wrapper">
+            <p class="text-muted" style="margin-bottom: 2rem;">Unlock and download official certificates based on your sustainability achievements.</p>
+            
+            <div class="cert-list" id="certList">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Hidden template for generating images -->
+<div id="certificateWrapper">
+    <div class="certificate-template" id="certTemplate">
+        <div class="cert-inner">
+            <div class="cert-logo"><i class="fa-solid fa-leaf"></i> EcoSort</div>
+            <div class="cert-title">Certificate of <span id="tplType">Sustainability</span></div>
+            <div class="cert-text">This is proudly awarded to</div>
+            <div class="cert-name" id="tplName">User Name</div>
+            <div class="cert-reason" id="tplReason">For making a significant contribution to responsible waste management and the circular economy through the EcoSort platform.</div>
+            
+            <div class="cert-footer">
+                <div class="signature-block">
+                    <div class="signature-line">EcoSort AI</div>
+                    <div style="font-size: 0.9rem; color: #666;">Platform Director</div>
+                </div>
+                <div class="signature-block">
+                    <div class="signature-line" id="tplDate" style="font-family: 'Inter', sans-serif; font-size: 1.1rem; border-bottom: none; margin-top: 10px;">Date</div>
+                    <div style="font-size: 0.9rem; color: #666;">Date of Issue</div>
+                </div>
+            </div>
+            
+            <div class="cert-id" id="tplId">ID: ECO-123456789</div>
+        </div>
+    </div>
+</div>
+
+<!-- Preview Modal -->
+<div class="modal" id="certModal">
+    <div class="modal-content text-center">
+        <button class="close-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></button>
+        <h3 style="margin-bottom: 1rem;">Certificate Preview</h3>
+        
+        <div id="loadingCert" style="padding: 3rem;">
+            <i class="fa-solid fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary-color);"></i>
+            <p style="margin-top: 1rem;">Generating high-quality certificate...</p>
+        </div>
+        
+        <img id="previewImg" class="preview-img" style="display: none;">
+        
+        <a id="downloadBtn" class="btn btn-primary" style="display: none;" download="EcoSort_Certificate.png">
+            <i class="fa-solid fa-download"></i> Download Certificate
+        </a>
+    </div>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/certificates.js"></script>
+</body>
+</html>

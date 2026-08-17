@@ -1,0 +1,408 @@
+/**
+ * dashboard.css - Completely refactored for the Radial "EcoSort AI-Powered Waste Management" UI
+ */
+
+/* Background Setup */
+body.radial-dashboard {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    font-family: 'Outfit', 'Inter', sans-serif;
+    color: #333;
+    /* High quality scenic nature background */
+    background: url('https://images.unsplash.com/photo-1472214103451-9374bd1c798e?auto=format&fit=crop&q=80') no-repeat center center/cover;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* Optional overlay to soften background for readability */
+body.radial-dashboard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.45);
+    z-index: 0;
+}
+
+/* Main Container ensuring z-index over the background blur */
+.radial-container {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* Header */
+.radial-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    backdrop-filter: blur(5px);
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1b5e20;
+}
+.header-center {
+    text-align: center;
+}
+.header-center h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #111;
+}
+.header-center p {
+    margin: 0.2rem 0 0 0;
+    font-size: 1rem;
+    color: #333;
+    font-weight: 500;
+}
+.header-center p span {
+    color: #2e7d32;
+    font-weight: 700;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+.bell-icon {
+    font-size: 1.25rem;
+    position: relative;
+    color: #111;
+}
+.bell-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #e74c3c;
+    color: white;
+    border-radius: 50%;
+    font-size: 0.6rem;
+    width: 14px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.profile-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.profile-img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #ccc;
+    object-fit: cover;
+}
+.profile-info {
+    text-align: left;
+}
+.profile-info h4 {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #111;
+}
+.profile-info span {
+    font-size: 0.75rem;
+    color: #666;
+}
+
+/* Layout Content */
+.radial-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    padding: 0 3rem;
+}
+
+/* Glass Panels */
+.glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-radius: 24px;
+    padding: 1.5rem;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.1);
+}
+.left-panel {
+    width: 280px;
+}
+.right-panel {
+    width: 320px;
+    background: rgba(30, 40, 45, 0.9);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Left Panel Content */
+.impact-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: #2e7d32;
+}
+.impact-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+.impact-icon {
+    font-size: 1.5rem;
+    color: #2e7d32;
+}
+.impact-val {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+}
+.impact-lbl {
+    font-size: 0.85rem;
+    color: #555;
+    margin: 0;
+}
+.impact-bottom {
+    text-align: center;
+    font-weight: 700;
+    color: #2e7d32;
+    margin-top: 2rem;
+}
+
+/* Right Panel Content */
+.coll-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+    color: #fff;
+}
+.coll-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+}
+.coll-icon {
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+.icon-blue { background: rgba(33, 150, 243, 0.2); color: #64b5f6; }
+.icon-green { background: rgba(76, 175, 80, 0.2); color: #81c784; }
+.icon-purple { background: rgba(156, 39, 176, 0.2); color: #ba68c8; }
+
+.coll-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0 0 0.2rem 0;
+}
+.coll-time {
+    font-size: 0.8rem;
+    color: #aaa;
+    margin: 0;
+}
+.view-full-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+.view-full-btn:hover {
+    color: #fff;
+}
+
+/* Center Orbit Layout */
+.radial-orbit-container {
+    position: relative;
+    width: 650px;
+    height: 650px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* The actual ring */
+.orbit-ring {
+    position: absolute;
+    width: 480px;
+    height: 480px;
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    z-index: 1;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1), inset 0 0 15px rgba(0,0,0,0.05);
+}
+
+/* Central Main Button */
+.center-scan-btn {
+    position: absolute;
+    z-index: 20;
+    width: 200px;
+    height: 200px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 8px solid rgba(76, 175, 80, 0.3);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+    text-decoration: none;
+    color: #111;
+    transition: transform 0.3s;
+}
+.center-scan-btn:hover {
+    transform: scale(1.05);
+}
+.center-scan-btn i {
+    font-size: 3rem;
+    color: #1b5e20;
+    margin-bottom: 0.5rem;
+}
+.center-scan-btn span {
+    font-weight: 800;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    color: #2e7d32;
+}
+.center-scan-btn small {
+    font-size: 0.75rem;
+    color: #666;
+    margin-top: 0.25rem;
+    font-weight: 500;
+}
+
+/* Orbital Nodes */
+.orbit-node {
+    position: absolute;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #333;
+    transition: transform 0.2s;
+    width: 140px; /* Allows text to wrap neatly */
+}
+.orbit-node:hover {
+    transform: scale(1.1);
+}
+.node-circle {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    margin-bottom: 0.5rem;
+    border: 1px solid rgba(0,0,0,0.05);
+}
+.node-text {
+    text-align: center;
+}
+.node-text strong {
+    font-size: 0.85rem;
+    display: block;
+    color: #111;
+    text-transform: uppercase;
+    margin-bottom: 0.2rem;
+}
+.node-text span {
+    font-size: 0.75rem;
+    color: #555;
+    line-height: 1.1;
+    display: block;
+}
+
+/* Positioning the 6 Nodes along the circle */
+/* Circle radius is 240px (half of 480px) */
+/* Formula: left = cx + r*cos(a), top = cy + r*sin(a) */
+/* center is 325,325 */
+
+/* Node 1: Top (-90 degrees) */
+.node-1 {
+    top: -5px;
+    left: 255px; /* 325 - 70 */
+}
+
+/* Node 2: Top Right (-30 degrees approx) */
+.node-2 {
+    top: 110px;
+    left: 500px;
+}
+
+/* Node 3: Bottom Right (30 degrees approx) */
+.node-3 {
+    top: 380px;
+    left: 500px;
+}
+
+/* Node 4: Bottom (90 degrees) */
+.node-4 {
+    top: 510px;
+    left: 255px;
+}
+
+/* Node 5: Bottom Left (150 degrees approx) */
+.node-5 {
+    top: 380px;
+    left: 10px;
+}
+
+/* Node 6: Top Left (210 degrees approx) */
+.node-6 {
+    top: 110px;
+    left: 10px;
+}
+
+/* Responsive Scaling */
+@media (max-width: 1300px) {
+    .radial-orbit-container { transform: scale(0.85); }
+    .radial-content { padding: 0 1rem; }
+}
+@media (max-width: 1100px) {
+    .radial-orbit-container { transform: scale(0.7); }
+}
+@media (max-width: 900px) {
+    .radial-content { flex-direction: column; overflow-y: auto; gap: 2rem; padding: 2rem 1rem;}
+    .radial-orbit-container { transform: scale(0.6); order: -1; margin-bottom: -150px;}
+    body.radial-dashboard { overflow-y: auto; }
+}

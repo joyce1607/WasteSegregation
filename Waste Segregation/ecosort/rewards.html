@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rewards & Badges | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .badges-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .badge-card {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 1.5rem 1rem;
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #eee;
+            position: relative;
+            transition: transform var(--transition-fast);
+        }
+
+        .badge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .badge-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+        }
+
+        .badge-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .badge-desc {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        /* Locked state */
+        .badge-card.locked {
+            background: #f9f9f9;
+            border: 1px dashed #ccc;
+        }
+
+        .badge-card.locked .badge-icon {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+
+        .badge-card.locked .badge-title {
+            color: var(--text-muted);
+        }
+
+        .lock-icon {
+            position: absolute;
+            bottom: 0;
+            right: -10px;
+            background: #666;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+        }
+        
+        /* Specific Badge Colors */
+        .badge-beginner { color: #8bc34a; }
+        .badge-hero { color: #03a9f4; }
+        .badge-energy { color: #ffeb3b; filter: drop-shadow(0 0 5px rgba(255, 235, 59, 0.5)); }
+        .badge-streak { color: #ff9800; filter: drop-shadow(0 0 5px rgba(255, 152, 0, 0.5)); }
+        .badge-champion { color: #4caf50; filter: drop-shadow(0 0 8px rgba(76, 175, 80, 0.6)); }
+
+        .progress-indicator {
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">My Rewards</h2></div>
+
+        <div class="content-wrapper">
+            <div class="card progress-section" style="margin-bottom: 2rem;">
+                <div class="flex justify-between items-center" style="margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="margin-bottom: 0.25rem;">Level Progress</h3>
+                        <p class="text-muted" style="font-size: 0.9rem;">Earn points to unlock new ranks and rewards.</p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 1.5rem; font-weight: bold; color: var(--accent-color);" id="totalPoints">0</div>
+                        <div style="font-size: 0.85rem; color: var(--text-muted);">Total Points</div>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem;">
+                    <span id="currentRankDisplay">🌱 Eco Beginner</span>
+                    <span id="nextRankDisplay">♻️ Recycling Hero</span>
+                </div>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" id="rankProgressBar" style="width: 0%; background: var(--accent-color);"></div>
+                </div>
+                <div style="text-align: center; margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-muted);" id="pointsToNext">
+                    1550 points to next rank
+                </div>
+            </div>
+
+            <h3 style="margin-bottom: 1rem;">Unlocked Badges</h3>
+            <div class="badges-grid" id="unlockedBadges">
+                <!-- Populated via JS -->
+            </div>
+
+            <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Locked Badges</h3>
+            <div class="badges-grid" id="lockedBadges">
+                <!-- Populated via JS -->
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/rewards.js"></script>
+</body>
+</html>

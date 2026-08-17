@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Challenges | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .challenge-card {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1rem;
+            padding: 1.5rem;
+            border: 1px solid #eee;
+        }
+        
+        .ch-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: rgba(33, 150, 243, 0.1);
+            color: #2196f3;
+            flex-shrink: 0;
+        }
+        
+        .ch-content {
+            flex: 1;
+        }
+        
+        .ch-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .ch-reward {
+            display: inline-block;
+            background: rgba(251, 192, 45, 0.2);
+            color: #f57f17;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+
+        .ch-progress {
+            margin-top: 1rem;
+        }
+        
+        .ch-progress-text {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .ch-action {
+            margin-left: 1rem;
+        }
+        
+        /* Completed State */
+        .challenge-card.completed {
+            background: rgba(76, 175, 80, 0.05);
+            border-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .challenge-card.completed .ch-icon {
+            background: var(--success);
+            color: white;
+        }
+        
+        @media (max-width: 600px) {
+            .challenge-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .ch-action {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 1rem;
+            }
+            .ch-action button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">Daily Challenges</h2></div>
+
+        <div class="content-wrapper">
+            <p class="text-muted" style="margin-bottom: 2rem;">Complete these challenges to earn extra Eco Points. Challenges reset daily.</p>
+            
+            <!-- In Progress Challenge -->
+            <div class="card challenge-card">
+                <div class="ch-icon"><i class="fa-solid fa-bottle-water"></i></div>
+                <div class="ch-content">
+                    <div class="ch-title">Sort 10 recyclable items <span class="ch-reward">+50 pts</span></div>
+                    <p class="text-muted" style="font-size: 0.9rem;">Properly dispose of plastic, glass, or metal items today.</p>
+                    <div class="ch-progress">
+                        <div class="ch-progress-text">
+                            <span>Progress</span>
+                            <span>7 / 10</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 70%; background: var(--info);"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ch-action">
+                    <a href="scanner.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Scan Now</a>
+                </div>
+            </div>
+
+            <!-- New Challenge -->
+            <div class="card challenge-card">
+                <div class="ch-icon" style="background: rgba(244, 67, 54, 0.1); color: #f44336;"><i class="fa-solid fa-battery-half"></i></div>
+                <div class="ch-content">
+                    <div class="ch-title">Correctly dispose of 3 batteries <span class="ch-reward">+100 pts</span></div>
+                    <p class="text-muted" style="font-size: 0.9rem;">Safely dispose of hazardous waste to protect the environment.</p>
+                    <div class="ch-progress">
+                        <div class="ch-progress-text">
+                            <span>Progress</span>
+                            <span>0 / 3</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 0%; background: var(--danger);"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ch-action">
+                    <a href="scanner.html" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">Scan Now</a>
+                </div>
+            </div>
+
+            <!-- Completed Challenge -->
+            <div class="card challenge-card completed">
+                <div class="ch-icon"><i class="fa-solid fa-check"></i></div>
+                <div class="ch-content">
+                    <div class="ch-title" style="text-decoration: line-through; color: var(--text-muted);">Sort 5 paper items <span class="ch-reward" style="background: rgba(0,0,0,0.05); color: #999;">Claimed</span></div>
+                    <p class="text-muted" style="font-size: 0.9rem;">You completed this challenge!</p>
+                    <div class="ch-progress">
+                        <div class="ch-progress-text">
+                            <span>Completed</span>
+                            <span>5 / 5</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 100%; background: var(--success);"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ch-action">
+                    <button class="btn" style="background: #eee; color: #999; cursor: not-allowed; padding: 0.5rem 1rem; font-size: 0.9rem;" disabled>Done</button>
+                </div>
+            </div>
+            
+            <h3 style="margin-top: 3rem; margin-bottom: 1rem;">Weekly Goals</h3>
+            <div class="card challenge-card">
+                <div class="ch-icon" style="background: rgba(76, 175, 80, 0.1); color: #4caf50;"><i class="fa-solid fa-calendar-week"></i></div>
+                <div class="ch-content">
+                    <div class="ch-title">Complete sorting for 7 consecutive days <span class="ch-reward">+300 pts</span></div>
+                    <p class="text-muted" style="font-size: 0.9rem;">Build a consistent habit of waste management.</p>
+                    <div class="ch-progress">
+                        <div class="ch-progress-text">
+                            <span>Progress</span>
+                            <span>4 / 7 days</span>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" style="width: 57%; background: var(--success);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

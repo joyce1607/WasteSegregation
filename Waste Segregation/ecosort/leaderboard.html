@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard | EcoSort</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <style>
+        .leaderboard-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .lb-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .lb-table tr {
+            border-bottom: 1px solid #f0f0f0;
+            transition: background var(--transition-fast);
+        }
+
+        .lb-table tr:hover {
+            background: #f9f9f9;
+        }
+
+        .lb-table th, .lb-table td {
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .lb-table th {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .rank-col {
+            width: 60px;
+            font-weight: 700;
+            text-align: center !important;
+        }
+
+        .rank-1, .rank-2, .rank-3 { font-size: 1.2rem; }
+        .rank-1 { color: #fbc02d; } /* Gold */
+        .rank-2 { color: #9e9e9e; } /* Silver */
+        .rank-3 { color: #cd7f32; } /* Bronze */
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-avatar-small {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .pts-col {
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-align: right !important;
+        }
+
+        .highlight-row {
+            background: rgba(76, 175, 80, 0.1) !important;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .dept-card {
+            background: white;
+            border: 1px solid #eee;
+            border-radius: var(--border-radius-md);
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .dept-rank {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #eee;
+            margin-right: 1.5rem;
+        }
+
+        .dept-info h3 { margin: 0; }
+        .dept-score { font-size: 1.2rem; font-weight: 700; color: var(--primary-color); }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <!-- Minimal Header -->
+    <header class="minimal-header">
+        <div class="header-logo">
+            <i class="fa-solid fa-leaf"></i> EcoSort
+        </div>
+        <div class="header-actions">
+            <a href="alerts.html" class="icon-btn"><i class="fa-regular fa-bell"></i></a>
+            <div class="user-avatar" id="topAvatar" onclick="window.location.href='profile.html'">U</div>
+        </div>
+    </header>
+
+    <!-- Floating Bottom Dock -->
+    <nav class="floating-dock">
+        <a href="dashboard.html" class="dock-item" data-page="dashboard.html">
+            <i class="fa-solid fa-house"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="collection.html" class="dock-item" data-page="collection.html">
+            <i class="fa-solid fa-box"></i>
+            <span>Collection</span>
+        </a>
+        <a href="scanner.html" class="dock-item scan-btn" data-page="scanner.html">
+            <div class="scan-circle">
+                <i class="fa-solid fa-camera"></i>
+            </div>
+        </a>
+        <a href="rewards.html" class="dock-item" data-page="rewards.html">
+            <i class="fa-solid fa-star"></i>
+            <span>Rewards</span>
+        </a>
+        <button class="dock-item more-btn" id="moreNavBtn">
+            <i class="fa-solid fa-ellipsis"></i>
+            <span>More</span>
+        </button>
+    </nav>
+    
+    <!-- More Menu -->
+    <div class="more-menu-overlay" id="moreNavOverlay"></div>
+    <div class="more-menu" id="moreNavMenu">
+        <div class="more-menu-header">
+            <h4>Explore EcoSort</h4>
+            <button id="closeMoreMenu"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="more-menu-grid">
+            <a href="impact.html" class="more-item"><i class="fa-solid fa-earth-americas" style="color: #2196f3;"></i> <span>Impact</span></a>
+            <a href="leaderboard.html" class="more-item"><i class="fa-solid fa-trophy" style="color: #fbc02d;"></i> <span>Rankings</span></a>
+            <a href="challenges.html" class="more-item"><i class="fa-solid fa-bullseye" style="color: #ff5722;"></i> <span>Challenges</span></a>
+            <a href="certificates.html" class="more-item"><i class="fa-solid fa-certificate" style="color: #9c27b0;"></i> <span>Certificates</span></a>
+            <a href="alerts.html" class="more-item"><i class="fa-solid fa-bell" style="color: #e91e63;"></i> <span>Alerts</span></a>
+            <a href="partners.html" class="more-item"><i class="fa-solid fa-building" style="color: #607d8b;"></i> <span>Partners</span></a>
+            <a href="profile.html" class="more-item"><i class="fa-solid fa-user" style="color: #4caf50;"></i> <span>Profile</span></a>
+            <a href="#" onclick="logout(); return false;" class="more-item" style="color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span></a>
+        </div>
+    </div>
+
+    
+
+    <main class="main-content">
+        <div class="page-header" style="margin-bottom: 2rem;"><h2 style="margin:0; font-size: 1.5rem; color: var(--primary-dark);">Leaderboard</h2></div>
+
+        <div class="content-wrapper">
+            <div style="background: linear-gradient(135deg, #1565c0, #0d47a1); color: white; padding: 2rem; border-radius: var(--border-radius-lg); margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                <div>
+                    <h2 style="color: white; margin-bottom: 0.5rem;"><i class="fa-solid fa-trophy" style="color: gold;"></i> Yearly Eco Champion</h2>
+                    <p style="opacity: 0.9;">Compete with students to become the sustainability master of the year.</p>
+                </div>
+                <div style="text-align: right; background: rgba(0,0,0,0.2); padding: 1rem 1.5rem; border-radius: 8px;">
+                    <div style="font-size: 0.9rem; opacity: 0.9;">Your Current Rank</div>
+                    <div style="font-size: 2rem; font-weight: bold;" id="myRankHighlight">#7</div>
+                </div>
+            </div>
+
+            <div class="leaderboard-tabs">
+                <button class="tab-btn active" onclick="switchTab('individual')">Individual Ranking</button>
+                <button class="tab-btn" onclick="switchTab('department')">Neighborhood Challenge</button>
+            </div>
+
+            <div id="tabIndividual">
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <table class="lb-table">
+                        <thead>
+                            <tr>
+                                <th class="rank-col">Rank</th>
+                                <th>User</th>
+                                <th>Area</th>
+                                <th class="pts-col">Total Points</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lbBody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tabDepartment" style="display: none;">
+                <h3 style="margin-bottom: 1.5rem; color: var(--primary-dark);">🏘️ Neighborhood Eco Challenge</h3>
+                
+                <div id="deptList">
+                    <!-- Populated via JS -->
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="js/auth.js"></script>
+<script src="js/app.js"></script>
+<script src="js/leaderboard.js"></script>
+</body>
+</html>
